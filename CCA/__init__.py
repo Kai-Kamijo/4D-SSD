@@ -1,1 +1,1 @@
-from .CCA import highpass_filter, polar_transform, fourie_transform, orientation_map
+from .CCA import highpass_filter, polar_transform, fourier_transform, orientation_map

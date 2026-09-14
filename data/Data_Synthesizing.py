@@ -1,8 +1,29 @@
+"""
+Generate a synthetic 4D-STEM dataset for testing/demoing the pipeline in
+this repository, without needing real experimental data.
+
+Four real diffraction patterns (iPS_001/111/221/251.png, in this directory)
+are used as reciprocal-space "textures" and tiled/rotated/mixed across a
+(100, 100) scan grid to build a synthetic (Nx, Ny, H, W) = (100, 100, 140,
+140) 4D-STEM array with Poisson noise, matching the low-count acquisition
+this project's denoiser targets. Run with `--GT` to instead save the
+noise-free ground truth used to evaluate denoising quality.
+
+Usage (run from this directory, so the relative PNG paths resolve):
+    python Data_Synthesizing.py --output_path synthetic_data.npy
+    python Data_Synthesizing.py --GT --output_path ground_truth.npy
+"""
+
+import os
 import numpy as np
 from PIL import Image
 import itertools
 from skimage.transform import resize, rotate
 import argparse
+
+# Directory this script lives in, so the source PNGs resolve regardless of
+# the caller's current working directory.
+_HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def load_image(filepath):
@@ -113,10 +134,10 @@ def main(args):
     output_path = args.output_path
 
     # Load four base reciprocal-space patterns and apply a constant gain factor
-    img_001 = load_image("iPS_001.png")*6
-    img_111 = load_image("iPS_111.png")*6
-    img_221 = load_image("iPS_221.png")*6
-    img_251 = load_image("iPS_251.png")*6
+    img_001 = load_image(os.path.join(_HERE, "iPS_001.png"))*6
+    img_111 = load_image(os.path.join(_HERE, "iPS_111.png"))*6
+    img_221 = load_image(os.path.join(_HERE, "iPS_221.png"))*6
+    img_251 = load_image(os.path.join(_HERE, "iPS_251.png"))*6
 
     # Build a small central disk mask to suppress the direct-beam region
     mask = ring_mask(img_001.shape, 8)
@@ -160,7 +181,10 @@ def main(args):
 def get_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Data Synthesizing configuration")
-    parser.add_argument('--GT', type=bool, default=False, help='making ground-truth')
+    # NOTE: `action='store_true'` (not `type=bool`) so the flag is off unless
+    # passed -- with `type=bool`, any non-empty string (including "False")
+    # parses as True, which is a common argparse footgun.
+    parser.add_argument('--GT', action='store_true', help='save the noise-free ground truth instead of applying Poisson noise')
     parser.add_argument('--scale', type=float, default=2, help='Poisson intensity scaling factor')
     parser.add_argument('--output_path', type=str, default='synthetic_data.npy', help='Path to save outputs')
 

@@ -1,3 +1,26 @@
+"""
+Rotation-Equivariant Component Analysis (CCA) for 4D-STEM diffraction data.
+
+Downstream analysis pipeline applied to a denoised 4D-STEM stack
+(Nx, Ny, H, W), corresponding to steps 2 and 4 of the pipeline described in
+the top-level README:
+1) `highpass_filter`  : per-diffraction-image FFT-domain Gaussian high-pass,
+                        to remove low-frequency background.
+2) `polar_transform`  : Cartesian (H, W) -> polar (r, theta) coordinates.
+3) `fourier_transform` : 1D FFT along the angular axis, giving a (r, m)
+                        representation where m is the rotational order
+                        (magnitude ~ rotation-invariant, phase ~ in-plane
+                        orientation). NMF on the magnitudes (via MALSpy,
+                        see demo.ipynb) then yields spatial coefficients
+                        `C` (Nx, Ny, n_components) and component spectra
+                        `S` (R, K, n_components).
+4) `orientation_map`  : robust peak detection on `S` per component, then
+                        phase-based in-plane angle estimation from the
+                        (r, m) Fourier phase, masked by `C`.
+
+See demo.ipynb for an end-to-end example.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import warp_polar, rotate
@@ -202,10 +225,17 @@ def polar_transform(highpass_data):
     return out4
 
 
-def fourie_transform(polar_images):
+def fourier_transform(polar_images):
     """
-    Apply rFFT as in the original code:
+    Apply a real-valued 1D FFT along the angular axis of each polar image:
         F = np.fft.rfft(image.T, axis=1)
+
+    `warp_polar` (used in `polar_transform`) returns each image as
+    (angle, radius), i.e. `image` has shape (theta, r). Transposing to
+    `image.T`, shape (r, theta), and running rFFT with axis=1 therefore
+    applies the FFT along the angular axis theta for each radius r, giving
+    a (r, m) representation where m is the rotational (angular-frequency)
+    order.
 
     Parameters
     ----------
@@ -230,7 +260,7 @@ def fourie_transform(polar_images):
 
     out4 = _unflatten_to_4d(out, scan_shape)  # (Nx,Ny,R,K)
     if out4.ndim != 4:
-        raise RuntimeError(f"fourie_transform output is not 4D: shape={out4.shape}")
+        raise RuntimeError(f"fourier_transform output is not 4D: shape={out4.shape}")
     return out4
 
 

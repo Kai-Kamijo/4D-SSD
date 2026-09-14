@@ -42,18 +42,27 @@ pip install -r requirements.txt
 
 2) **Denoise** — `4DSSD/training.py` trains a self-supervised blind-spot
    denoiser and saves the denoised result. `--model` selects both the data
-   layout and the matching network architecture:
-   - `2D`: a directory of independent images, or the center frame of a 4D
-     ndarray (`BlindNet2D`)
-   - `3D`: a stacked-frame volume — tilt series / focal series / video /
-     z-stack (`BlindNet3D`); `--frame_axis` selects which array axis
-     indexes frames
-   - `4D`: a 4D-STEM scan grid `(Nx, Ny, H, W)` (`BlindNet4D`)
+   layout and the matching network architecture (`2D`/`3D`/`4D`; see the
+   argument table below).
    ```bash
    python 4DSSD/training.py --filename data/synthetic_data.npy --model 4D --output_path outputs
    # or run inference only, from an existing checkpoint:
    python 4DSSD/training.py --filename data/synthetic_data.npy --model 4D --checkpoint outputs/<run>/best_model_epoch*.pth
    ```
+
+   `training.py` arguments:
+
+   | Argument | Type / default | Description |
+   |---|---|---|
+   | `--filename` | str, **required** | Path to the input data: an `.npy` file (3D or 4D array; see `--model`) or, for `--model 2D`, a directory of individual image files. |
+   | `--output_path` | str, default `../outputs` | Output root directory. A timestamped subdirectory is created under it for each run, holding `loss.csv`, the best checkpoint (`best_model_epoch*.pth`), and the denoised result. |
+   | `--num_epochs` | int, default `100` | Maximum number of training epochs. Training may stop earlier via early stopping (patience 20 epochs, on validation loss). Ignored when `--checkpoint` is given. |
+   | `--sample_size` | str, default `all` | Currently parsed but not applied — the full dataset is always used. |
+   | `--model` | `{2D,3D,4D}`, default `4D` | Selects both the data layout and the matching network: `2D` — a directory of independent images, or the center frame of a 4D-STEM `.npy` array (`BlindNet2D`); `3D` — a stacked-frame volume, e.g. tilt series / focal series / video / z-stack (`BlindNet3D`); `4D` — a 4D-STEM scan grid `(Nx, Ny, H, W)` (`BlindNet4D`). |
+   | `--loss` | str, default `mse` | Training loss: `mse` or `poisson`. |
+   | `--anscombe` | flag, default off | Apply the Anscombe variance-stabilizing transform to the data before training/inference (useful for low-count/Poisson-noise data). |
+   | `--frame_axis` | int, default `0` | For `--model 3D` only: which axis of the input `.npy` array indexes frames (the array is transposed internally so this axis becomes axis 0). |
+   | `--checkpoint` | str, default none | Path to a previously saved `.pth` state dict. If given, training is skipped entirely and the checkpoint is used to run inference/reconstruction only. |
 
 3) **Orientation mapping** — `CCA/CCA.py` provides the downstream analysis
    (high-pass filter → polar transform → angular FFT → NMF-based

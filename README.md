@@ -1,15 +1,15 @@
 # Unsupervised Machine Learning for Automated Crystal Orientation Mapping on low-count 4D-STEM data
 
 Author: Kai Kamijo, Motoki Shiga, Shusuke Kanomi, Tomohiro Miyata, Hiroshi Jinnai \
-Paper: []()
+Paper: [10.21203/rs.3.rs-9374144/v1](https://www.researchsquare.com/article/rs-9374144/v1)
 
 ## Overview
 This repository provides a pipeline to:
-1) denoise low-dose 4D-STEM diffraction patterns,
-2) transform diffraction images to polar coordinates and perform angular Fourier analysis,
-3) segment structural regions via NMF,
-4) estimate in-plane crystal orientation from Fourier phase, and
-5) generate orientation maps on the scan grid.
+1) denoise low-dose 4D-STEM diffraction patterns
+2) transform diffraction images to polar coordinates and perform angular Fourier analysis
+3) segment structural regions via NMF
+4) estimate in-plane crystal orientation from Fourier phase
+5) generate orientation maps on the scan grid
 
 **Input:** 4D ndarray `(Nx, Ny, H, W)`  
 **Output:** region labels / component maps and orientation maps `(Nx, Ny)` (plus intermediate arrays).
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-1) **(Optional) Generate synthetic test data** — if you don't have real
+1) **(Optional) Generate synthetic data** — if you don't have real
    4D-STEM data at hand, `data/Data_Synthesizing.py` builds a synthetic
    `(100, 100, 140, 140)` low-count 4D-STEM array from the sample
    diffraction patterns in `data/`:
@@ -90,3 +90,17 @@ build on the blind-spot architecture and multi-frame extension described in:
 ## License
 
 This project is licensed under the MIT License — see [LICENSE](LICENSE).
+
+## Citation
+```
+@article{kamijo_2026_4DSSD,
+  title = {Unsupervised Machine Learning for Automated Crystal Orientation Mapping on Noisy {4D-STEM} Data},
+  author = {Kamijo, Kai and Shiga, Motoki and Kanomi, Shusuke and Miyata, Tomohiro and Jinnai, Hiroshi},
+  year  = {2026},
+  month = apr,
+  journal = {Research Square},
+  doi = {10.21203/rs.3.rs-9374144/v1},
+  url = {https://www.researchsquare.com/article/rs-9374144/v1},
+  note = {Preprint (Version 1)}
+}
+```

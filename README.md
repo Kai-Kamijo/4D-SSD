@@ -1,7 +1,7 @@
-# Unsupervised Machine Learning for Automated Crystal Orientation Mapping on low-count 4D-STEM data
+# Unsupervised machine learning for automated crystal orientation mapping on noisy 4D-STEM data
 
 Author: Kai Kamijo, Motoki Shiga, Shusuke Kanomi, Tomohiro Miyata, Hiroshi Jinnai \
-Paper: [10.21203/rs.3.rs-9374144/v1](https://www.researchsquare.com/article/rs-9374144/v1)
+Paper: [10.1038/s41524-026-02337-x](https://doi.org/10.1038/s41524-026-02337-x)
 
 ## Overview
 This repository provides a pipeline to:
@@ -94,13 +94,12 @@ This project is licensed under the MIT License — see [LICENSE](LICENSE).
 ## Citation
 ```
 @article{kamijo_2026_4DSSD,
-  title = {Unsupervised Machine Learning for Automated Crystal Orientation Mapping on Noisy {4D-STEM} Data},
+  title = {Unsupervised machine learning for automated crystal orientation mapping on noisy 4D-STEM data},
   author = {Kamijo, Kai and Shiga, Motoki and Kanomi, Shusuke and Miyata, Tomohiro and Jinnai, Hiroshi},
   year  = {2026},
-  month = apr,
-  journal = {Research Square},
-  doi = {10.21203/rs.3.rs-9374144/v1},
-  url = {https://www.researchsquare.com/article/rs-9374144/v1},
-  note = {Preprint (Version 1)}
+  month = oct,
+  journal = {npj Computational Materials},
+  doi = {10.1038/s41524-026-02337-x},
+  url = {https://doi.org/10.1038/s41524-026-02337-x}
 }
 ```
